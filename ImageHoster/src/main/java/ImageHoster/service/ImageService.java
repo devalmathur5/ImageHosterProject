@@ -53,6 +53,6 @@ public class ImageService {
     }
 
     public User getUserByImageId(Integer imageId){
-         return imageRepository.getUserByImageId(imageId);
+        return imageRepository.getUserByImageId(imageId);
     }
 }

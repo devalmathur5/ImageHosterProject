@@ -48,6 +48,7 @@ public class ImageController {
     @RequestMapping("/images/{imageId}/{title}")
     public String showImage(@PathVariable("title") String title, @PathVariable("imageId") Integer imageId, Model model, HttpSession session) {
         User user = (User)session.getAttribute("loggeduser");
+        System.out.println("----------------------------------------------"+imageId+"-------------------------------------------------------");
         Image image = imageService.getImageUsingIdTitle(title, imageId);
         model.addAttribute("title", image.getTitle());
         model.addAttribute("id", image.getId());
@@ -95,13 +96,10 @@ public class ImageController {
     //The method first needs to convert the list of all the tags to a string containing all the tags separated by a comma and then add this string in a Model type object
     //This string is then displayed by 'edit.html' file as previous tags of an image
     @RequestMapping(value = "/editImage")
-    public String editImage(@RequestParam("imageId") Integer imageId, Model model, HttpSession session) {
+    public String editImage(@RequestParam("imageId") Integer imageId, Model model) {
         Image image = imageService.getImage(imageId);
-        User user = imageService.getUserByImageId(imageId);
 
-        User loggedUser = (User)session.getAttribute("loggeduser");
         String tags = convertTagsToString(image.getTags());
-        
         model.addAttribute("image", image);
         model.addAttribute("tags", tags);
         return "images/edit";
