@@ -5,6 +5,9 @@ import ImageHoster.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 @Service
 public class UserService {
 
@@ -32,4 +35,13 @@ public class UserService {
         }
     }
 
+    public boolean checkPassword(User user){
+        String pass = user.getPassword();
+        Pattern pattern = Pattern.compile("[^a-zA-Z0-9]");
+        Matcher matcher = pattern.matcher(pass);
+        if(matcher.find()){
+            return true;
+        }
+        return false;
+    }
 }

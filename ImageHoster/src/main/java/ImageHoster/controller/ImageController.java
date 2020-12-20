@@ -21,6 +21,12 @@ import java.util.*;
 @Controller
 public class ImageController {
 
+    /* Why do it is required to store the text in String objects,
+     when there is notification texts stored in the image.html file
+     */
+    final String editError = "Only the owner of the image can edit the image";
+    final String deleteError = "Only the owner of the image can delete the image";
+
     @Autowired
     private ImageService imageService;
 
@@ -48,8 +54,7 @@ public class ImageController {
     @RequestMapping("/images/{imageId}/{title}")
     public String showImage(@PathVariable("title") String title, @PathVariable("imageId") Integer imageId, Model model, HttpSession session) {
         User user = (User)session.getAttribute("loggeduser");
-        System.out.println("----------------------------------------------"+imageId+"-------------------------------------------------------");
-        Image image = imageService.getImageUsingIdTitle(title, imageId);
+        Image image = imageService.getImageByIdTitle(title, imageId);
         model.addAttribute("title", image.getTitle());
         model.addAttribute("id", image.getId());
         model.addAttribute("image", image);
@@ -96,13 +101,22 @@ public class ImageController {
     //The method first needs to convert the list of all the tags to a string containing all the tags separated by a comma and then add this string in a Model type object
     //This string is then displayed by 'edit.html' file as previous tags of an image
     @RequestMapping(value = "/editImage")
-    public String editImage(@RequestParam("imageId") Integer imageId, Model model) {
+    public String editImage(@RequestParam("imageId") Integer imageId, Model model, HttpSession session) {
+        User loggedUser = (User)session.getAttribute("loggeduser");
+        Integer userId = imageService.getUserIdByImageId(imageId);
         Image image = imageService.getImage(imageId);
 
-        String tags = convertTagsToString(image.getTags());
-        model.addAttribute("image", image);
-        model.addAttribute("tags", tags);
-        return "images/edit";
+        if(loggedUser.getId() == userId) {
+            String tags = convertTagsToString(image.getTags());
+            model.addAttribute("image", image);
+            model.addAttribute("tags", tags);
+            return "images/edit";
+        }
+        else {
+            model.addAttribute("editError", editError);
+            return showImage(image.getTitle(), image.getId(), model, session);
+        }
+
     }
 
     //This controller method is called when the request pattern is of type 'images/edit' and also the incoming request is of PUT type
@@ -144,11 +158,23 @@ public class ImageController {
     //The method calls the deleteImage() method in the business logic passing the id of the image to be deleted
     //Looks for a controller method with request mapping of type '/images'
     @RequestMapping(value = "/deleteImage", method = RequestMethod.DELETE)
-    public String deleteImageSubmit(@RequestParam(name = "imageId") Integer imageId) {
-        imageService.deleteImage(imageId);
-        return "redirect:/images";
-    }
+    public String deleteImageSubmit(@RequestParam(name = "imageId") Integer imageId, Model model, HttpSession session) {
+        User user = (User)session.getAttribute("loggeduser");
+        Integer userId = imageService.getUserIdByImageId(imageId);
+        Image image = imageService.getImage(imageId);
 
+        if(userId == user.getId()){
+            imageService.deleteImage(imageId);
+            return "redirect:/images";
+        }
+        else{
+            String tags = convertTagsToString(image.getTags());
+            model.addAttribute("tags", tags);
+            model.addAttribute("image", image);
+            model.addAttribute("deleteError", deleteError);
+            return showImage(image.getTitle(), image.getId(), model, session);
+        }
+    }
 
     //This method converts the image to Base64 format
     private String convertUploadedFileToBase64(MultipartFile file) throws IOException {
@@ -191,4 +217,15 @@ public class ImageController {
 
         return tagString.toString();
     }
+
+
+    @RequestMapping("/images/{imageId}/{title}/comments")
+    public String uploadComments(@PathVariable("title") String title, @PathVariable("imageId") Integer imageId, Model model, HttpSession session) {
+        User user = (User)session.getAttribute("loggeduser");
+        Image image = imageService.getImageByIdTitle(title, imageId);
+
+     
+        return "images/image";
+    }
+
 }

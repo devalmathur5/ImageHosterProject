@@ -114,38 +114,29 @@ public class ImageRepository {
 
     public Image getImageUsingIdTitle(String title, Integer imageId){
         EntityManager em = emf.createEntityManager();
-        EntityTransaction transaction = em.getTransaction();
         Image image = null;
         try {
-            transaction.begin();
             TypedQuery<Image> typedQuery
                     = em.createQuery("SELECT i from Image i where i.id =:imageId and i.title =:title", Image.class)
                     .setParameter("imageId", imageId).setParameter("title", title);
             image = typedQuery.getSingleResult();
-            em.remove(image);
-            transaction.commit();
         } catch (Exception e) {
-            transaction.rollback();
+            System.out.println("No such image found!!!!!!!!!!!");
         }
         return image;
     }
 
-    public User getUserByImageId(Integer imageId){
+    public Integer getUserIdByImageId(Integer imageId){
         EntityManager em = emf.createEntityManager();
-        EntityTransaction transaction = em.getTransaction();
-        User user = null;
-        Image image = null;
         try {
-            transaction.begin();
             TypedQuery<Image> typedQuery
                     = em.createQuery("SELECT i from Image i where i.id =:imageId ", Image.class)
                     .setParameter("imageId", imageId);
-            image = typedQuery.getSingleResult();
-            em.remove(image);
-            transaction.commit();
+            User user = typedQuery.getSingleResult().getUser();
+            return user.getId();
         } catch (Exception e) {
-            transaction.rollback();
+            System.out.println("No such USER found!!!!!!!!!!! Exception Ocurred.....");
         }
-        return image.getUser();
+        return null;
     }
 }

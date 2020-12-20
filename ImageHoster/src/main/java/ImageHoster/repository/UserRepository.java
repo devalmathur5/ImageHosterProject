@@ -1,5 +1,6 @@
 package ImageHoster.repository;
 
+import ImageHoster.model.Image;
 import ImageHoster.model.User;
 import org.springframework.stereotype.Repository;
 

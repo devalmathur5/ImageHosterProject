@@ -3,6 +3,7 @@ package ImageHoster.service;
 import ImageHoster.model.Image;
 import ImageHoster.model.User;
 import ImageHoster.repository.ImageRepository;
+import ImageHoster.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,8 @@ import java.util.List;
 public class ImageService {
     @Autowired
     private ImageRepository imageRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     //Call the getAllImages() method in the Repository and obtain a List of all the images in the database
     public List<Image> getAllImages() {
@@ -47,12 +50,11 @@ public class ImageService {
         imageRepository.deleteImage(imageId);
     }
 
-    public Image getImageUsingIdTitle(String title, Integer id){
-        Image image = imageRepository.getImageUsingIdTitle(title, id);
-        return image;
+    public Image getImageByIdTitle(String title, Integer id){
+        return imageRepository.getImageUsingIdTitle(title, id);
     }
 
-    public User getUserByImageId(Integer imageId){
-        return imageRepository.getUserByImageId(imageId);
+    public Integer getUserIdByImageId(Integer imageId){
+        return imageRepository.getUserIdByImageId(imageId);
     }
 }

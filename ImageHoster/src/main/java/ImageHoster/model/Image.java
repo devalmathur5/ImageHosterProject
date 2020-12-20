@@ -30,7 +30,6 @@ public class Image {
     @Column(columnDefinition = "TEXT")
     private String imageFile;
 
-
     @Column(name = "description")
     private String description;
 
@@ -50,6 +49,9 @@ public class Image {
     //Since the mapping is Many to Many, a new table will be generated containing the two columns both referencing to the primary key of both the tables ('images', 'tags')
     @ManyToMany(fetch = FetchType.LAZY)
     private List<Tag> tags = new ArrayList<>();
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    private List<Comment> comments = new ArrayList<>();
 
     public Image() {
     }
