@@ -21,7 +21,7 @@ public class Comment {
     private Date createdDate;
 
     @JoinColumn(name = "user_id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private User user;
 
     // Write the annotation for many to many between images and tags where they are mapped by tags field in the images table
@@ -31,7 +31,7 @@ public class Comment {
     //Note that no column will be generated for this attribute in the database instead a new table will be created
     //Since the mapping is Many to Many, a new table will be generated containing the two columns both referencing to the primary key of both the tables ('images', 'tags')
     @JoinColumn(name = "image_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER) //because image id should be fetched.
     private Image images;
 
     public Integer getId() {
