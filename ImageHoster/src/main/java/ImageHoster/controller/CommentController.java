@@ -41,6 +41,7 @@ public class CommentController {
         newComment.setUser(user);
         newComment.setCreatedDate(new Date());
         newComment.setText(commentText);
+        newComment.setId(commentService.getMaxId());
 
         System.out.println("image Id -------------------- " + image.getId());
         System.out.println("user id --------------------- " + user.getId());

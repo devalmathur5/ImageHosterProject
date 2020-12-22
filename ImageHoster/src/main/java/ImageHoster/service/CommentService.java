@@ -14,4 +14,8 @@ public class CommentService {
         return commentRepository.createComment(comment);
     }
 
+    public Integer getMaxId(){
+        return commentRepository.getMaxId();
+    }
+
 }
